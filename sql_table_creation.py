@@ -1,3 +1,8 @@
+### check python interpreter 
+### check python version ### python --version
+### check pip version  ### pip --version
+### pip install python-dotenv for installing dotenv
+
 
 import dbm
 import pandas as pd 
@@ -16,7 +21,7 @@ AZURE_MYSQL_PASSWORD = os.getenv("AZURE_MYSQL_PASSWORD")
 AZURE_MYSQL_DATABASE = os.getenv("AZURE_MYSQL_DATABASE")
 
 string_azure = f'mysql+pymysql://{AZURE_MYSQL_USER}:{AZURE_MYSQL_PASSWORD}@{AZURE_MYSQL_HOSTNAME}:3306/{AZURE_MYSQL_DATABASE}'
-db_azure = create_engine(string_azure)
+db_azure = create_engine(string_azure) ### if error, run conda install -c anaconda pymysql 
 
 ####  SHOW THE TABLES FROM THE DATABASE  
 tableNames_azure = db_azure.table_names()
@@ -27,29 +32,6 @@ tableNames_azure = ['patient_conditions', 'patient_procedure', 'patients', 'cond
 #### first step below is just creating a basic version of each of the tables,
 #### along with the primary keys and default values 
 
-
-table_patient_conditions = """
-create table if not exists patient_conditions (
-    id int auto_increment,
-    mrn varchar(255) default null,
-    icd10_code varchar(255) default null,
-    PRIMARY KEY (id),
-    FOREIGN KEY (mrn) REFERENCES patients(mrn) ON DELETE CASCADE,
-    FOREIGN KEY (icd10_code) REFERENCES conditions(icd10_code) ON DELETE CASCADE
-); 
-"""
-
-
-table_patient_procedure = """
-create table if not exists patient_procedure (
-    id int auto_increment,
-    mrn varchar(255) default null,
-    proc_cpt varchar(255) default null,
-    PRIMARY KEY (id),
-    FOREIGN KEY (mrn) REFERENCES patients(mrn) ON DELETE CASCADE,
-    FOREIGN KEY (proc_cpt) REFERENCES sx_procedure(proc_cpt) ON DELETE CASCADE
-); 
-"""
 
 table_patients = """
 create table if not exists patients (
@@ -75,12 +57,67 @@ create table if not exists conditions (
 ); 
 """
 
+table_prod_medications = """
+create table if not exists prod_medications (
+    id int auto_increment,
+    med_ndc varchar(255) default null unique,
+    med_human_name varchar(255) default null,
+    med_is_dangerous varchar(255) default null,
+    PRIMARY KEY (id)
+); 
+"""
+
+table_treatment_procedure = """
+create table if not exists treatment_procedure (
+    id int auto_increment,
+    proc_cpt varchar(255) default null unique,
+    proc_desc varchar(255) default null,
+    PRIMARY KEY (id)
+);
+"""
+
+table_patient_conditions = """
+create table if not exists patient_conditions (
+    id int auto_increment,
+    mrn varchar(255) default null,
+    icd10_code varchar(255) default null,
+    PRIMARY KEY (id),
+    FOREIGN KEY (mrn) REFERENCES patients(mrn) ON DELETE CASCADE,
+    FOREIGN KEY (icd10_code) REFERENCES conditions(icd10_code) ON DELETE CASCADE
+); 
+"""
+
+table_patient_medications = """
+create table if not exists production_patient_medications (
+    id int auto_increment,
+    mrn varchar(255) default null,
+    med_ndc varchar(255) default null,
+    PRIMARY KEY (id),
+    FOREIGN KEY (mrn) REFERENCES patients(mrn) ON DELETE CASCADE,
+    FOREIGN KEY (med_ndc) REFERENCES prod_medications(med_ndc) ON DELETE CASCADE
+); 
+"""
+
+table_patient_procedure = """
+create table if not exists patient_procedure (
+    id int auto_increment,
+    mrn varchar(255) default null,
+    proc_cpt varchar(255) default null,
+    PRIMARY KEY (id),
+    FOREIGN KEY (mrn) REFERENCES patients(mrn) ON DELETE CASCADE,
+    FOREIGN KEY (proc_cpt) REFERENCES treatment_procedure(proc_cpt) ON DELETE CASCADE
+); 
+"""
 
 
-db_azure.execute(table_patient_conditions)
-db_azure.execute(table_patient_procedure)
 db_azure.execute(table_patients)
 db_azure.execute(table_conditions)
+db_azure.execute(table_prod_medications)
+db_azure.execute(table_treatment_procedure)
+db_azure.execute(table_patient_conditions)
+db_azure.execute(table_patient_medications)
+db_azure.execute(table_patient_procedure)
+
 
 
 

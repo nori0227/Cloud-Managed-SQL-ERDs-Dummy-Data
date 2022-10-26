@@ -10,6 +10,7 @@ import uuid
 import random
 
 
+
 AZURE_MYSQL_HOSTNAME = os.getenv("AZURE_MYSQL_HOSTNAME")
 AZURE_MYSQL_USER = os.getenv("AZURE_MYSQL_USER")
 AZURE_MYSQL_PASSWORD = os.getenv("AZURE_MYSQL_PASSWORD")
