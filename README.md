@@ -1,6 +1,6 @@
 # Cloud-Managed-SQL-ERDs-Dummy-Data
 HHA 504 WEEK 7 Assignment 6 --  week 6
-
+mysql workbench
 
 ## Need to have a .env file in the root directory with following structure for Part5_Db:
 ```
