@@ -1,4 +1,4 @@
-
+## import packages
 import dbm
 import pandas as pd
 import sqlalchemy
@@ -6,10 +6,8 @@ from sqlalchemy import create_engine
 from dotenv import load_dotenv
 import os
 from faker import Faker  # https://faker.readthedocs.io/en/master/ ## pip install faker
-import uuid
+import uuid 
 import random
-
-
 
 AZURE_MYSQL_HOSTNAME = os.getenv("AZURE_MYSQL_HOSTNAME")
 AZURE_MYSQL_USER = os.getenv("AZURE_MYSQL_USER")
@@ -58,12 +56,17 @@ ndc_codes_1k = ndc_codes.sample(n=1000, random_state=1)
 # drop duplicates from ndc_codes_1k
 ndc_codes_1k = ndc_codes_1k.drop_duplicates(subset=['PRODUCTNDC'], keep='first')
 
-###INSERTING IN FAKE PATIENTS ##########
-# Approach 1: pandas to_sql
+
+
+#########   INSERTING IN FAKE PATIENTS  ##########
+
+# Approach: pandas to_sql
 df_fake_patients.to_sql('patients', con=db_azure,
                         if_exists='append', index=False)
 # query db_azure to see if data is there
 df_azure = pd.read_sql_query("SELECT * FROM patients", db_azure)
+
+
 
 ########## INSERTING IN FAKE CONDITIONS ##########
 
@@ -81,10 +84,6 @@ for index, row in icd10codesShort_1k.iterrows():
 # query dbs to see if data is there
 df_azure = pd.read_sql_query("SELECT * FROM conditions", db_azure)
 
-
-# ###### the above way is inefficient, but it works. 
-# ###### below is better if we have thousands/millions of rows to insert
-# ##### for, for these big pushes, recommend using pandas to_sql, to do this, just need to make sure column names first match
 # icd10codesShort_1k_mod = icd10codesShort_1k.rename(columns={'CodeWithSeparator': 'icd10_code', 'ShortDescription': 'icd10_description'})
 # icd10codesShort_1k_mod.to_sql('conditions', con=db_azure, if_exists='replace', index=False)
 
