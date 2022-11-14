@@ -23,6 +23,12 @@ AZURE_MYSQL_DATABASE = "inserthere"
 
 ## in vscode, do the following
 1. check for the correct python interpreter 
-1. pip install python-dotenv
-2. conda install -c anaconda pymysql
+2. pip install python-dotenv
+3. pip install faker
+4. conda install -c anaconda pymysql
+
+## in terminal
+1. mysql -u jannatul -h 504-db-server.mysql.database.azure.com -p
+2. show databases;
+3. use patient_portal; (name of the database)
 
